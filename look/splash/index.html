@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- Boot splash: what a cold boot shows until CleanFrame is in place as Home (about a minute), instead of LG's Home.
+     CleanFrame's default photo (Unsplash License) with CleanFrame's own shading and clock, so the dock simply appears. -->
+<html><head><meta charset="utf-8"><title>Home</title>
+<style>
+@font-face{font-family:Manrope;src:url(manrope.woff2) format("woff2");font-weight:400 700}
+html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#05090b;color:#f6f1e7;font-family:Manrope,sans-serif}
+.photo{position:absolute;left:0;top:0;width:1920px;height:1080px;object-fit:cover}
+.shade{position:absolute;left:0;top:0;width:1920px;height:300px;background:linear-gradient(to bottom,rgba(4,10,12,.32),rgba(4,10,12,.14) 150px,rgba(4,10,12,0))}
+.scrim{position:absolute;left:0;top:560px;width:1920px;height:520px;background:linear-gradient(to bottom,rgba(4,10,12,0),rgba(4,10,12,.42) 70%,rgba(4,10,12,.52))}
+.clock{position:absolute;left:140px;top:72px;font-size:64px;line-height:84px;font-weight:500;letter-spacing:-2px;font-variant-numeric:tabular-nums;text-shadow:0 1px 3px rgba(0,0,0,.22)}
+.dot{position:absolute;left:50%;bottom:120px;width:10px;height:10px;margin-left:-5px;border-radius:5px;background:rgba(246,241,231,.7);animation:p 1.4s ease-in-out infinite}
+@keyframes p{0%,100%{opacity:.25}50%{opacity:.9}}
+</style></head>
+<body>
+<img class="photo" src="misty.jpg" alt="">
+<div class="shade"></div><div class="scrim"></div>
+<div class="clock" id="clock"></div>
+<div class="dot"></div>
+<script>
+(function () {
+  function tick() {
+    var d = new Date(), h = d.getHours() % 12 || 12, m = d.getMinutes();
+    document.getElementById('clock').textContent = h + ':' + (m < 10 ? '0' : '') + m;
+  }
+  tick(); setInterval(tick, 5000);
+  /* nothing to do with the remote here: Home takes over by itself */
+  document.addEventListener('keydown', function (e) { if (e.keyCode === 461 || e.keyCode === 8) e.preventDefault(); });
+}());
+</script>
+</body></html>

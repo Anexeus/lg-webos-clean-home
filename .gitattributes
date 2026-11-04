@@ -1,0 +1,15 @@
+# the TV's shell needs LF line endings, also when cloned on Windows
+*.sh text eol=lf
+tv/90-lgtv-tune text eol=lf
+tv/*.conf text eol=lf
+tv/*.css text eol=lf
+look/**/*.js text eol=lf
+look/**/*.html text eol=lf
+look/**/*.css text eol=lf
+look/**/*.json text eol=lf
+*.ps1 text eol=crlf
+*.jpg binary
+*.png binary
+*.webp binary
+*.woff2 binary
+*.ttf binary

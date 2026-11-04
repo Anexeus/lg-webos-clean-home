@@ -1,0 +1,40 @@
+/* CleanFrame dock: dark glass bar, see-through tiles (white glyph + name pictures), a soft light glass box on the focused app
+   instead of a ring, no lift or zoom. Put into CleanYourTV's launcher page by patch-launcher.sh. */
+#dock {
+  background: rgba(16, 20, 24, 0.46) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 60px rgba(0, 0, 0, 0.28) !important;
+}
+#dock .tile {
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: background-color calc(0.16s * var(--spd)) ease !important;
+}
+#dock .tile::before {
+  display: none !important;
+}
+#dock .tile.f,
+#dock .tile.fill.f {
+  background: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+#dock .tile.fill img {
+  object-fit: fill !important;
+}
+/* the HDMI input tile, drawn by the launcher: the same glyph size and label as the pictures */
+#dock .tile.inp svg {
+  width: 74px !important;
+  height: 74px !important;
+  margin-top: 4px;
+  opacity: 0.96;
+}
+#dock .tile.inp .slab {
+  font-size: 27px !important;
+  font-weight: 500;
+}
+#dock .tile.inp .slab.sub {
+  display: none !important;
+}
+#dock .tile.inp > * + * {
+  margin-top: 8px !important;
+}

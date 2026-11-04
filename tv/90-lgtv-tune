@@ -1,0 +1,10 @@
+#!/bin/sh
+# Boot hook (Homebrew Channel runs /var/lib/webosbrew/init.d/* at every boot). Must return at once: anything slow runs in
+# the background. Pause it without deleting: touch /media/developer/lgtv-tune/DISABLE
+D=/media/developer/lgtv-tune
+[ -e "$D/DISABLE" ] && exit 0
+[ -f "$D/tune.sh" ] || exit 0
+# cold boot straight to CleanFrame (splash first), see bootsplash.sh
+[ -f "$D/bootsplash.sh" ] && (sh "$D/bootsplash.sh" boot) </dev/null >/dev/null 2>&1 &
+(sleep 60; sh "$D/tune.sh" apply) </dev/null >/dev/null 2>&1 &
+exit 0

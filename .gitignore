@@ -1,0 +1,5 @@
+.claude/
+look/dist/
+__pycache__/
+*.pyc
+*.ipk

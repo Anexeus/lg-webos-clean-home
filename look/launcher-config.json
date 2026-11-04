@@ -1,0 +1,33 @@
+{
+  "dock": [
+    "youtube.leanback.v4",
+    "com.smarterstvplayers.net",
+    "com.webos.app.hdmi1",
+    "com.webos.app.browser",
+    "com.webos.app.mediadiscovery",
+    "com.webos.app.discovery",
+    "org.webosbrew.hbchannel",
+    "ooo.lew.lifesgoodwithoutspying"
+  ],
+  "hidden": [
+    "com.webos.app.camera",
+    "com.webos.app.homeconnect",
+    "com.webos.app.lifeonscreen",
+    "com.webos.app.sportsteamsettings",
+    "org.webosbrew.safeupdate",
+    "com.cleanyourtv.manager"
+  ],
+  "runDots": true,
+  "topbar": [
+    {
+      "label": "Inputs",
+      "icon": "inputs",
+      "action": "inputs"
+    },
+    {
+      "label": "Settings",
+      "icon": "settings",
+      "app": "com.palm.app.settings"
+    }
+  ]
+}
