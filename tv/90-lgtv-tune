@@ -4,7 +4,5 @@
 D=/media/developer/lgtv-tune
 [ -e "$D/DISABLE" ] && exit 0
 [ -f "$D/tune.sh" ] || exit 0
-# cold boot straight to CleanFrame (splash first), see bootsplash.sh
-[ -f "$D/bootsplash.sh" ] && (sh "$D/bootsplash.sh" boot) </dev/null >/dev/null 2>&1 &
 (sleep 60; sh "$D/tune.sh" apply) </dev/null >/dev/null 2>&1 &
 exit 0

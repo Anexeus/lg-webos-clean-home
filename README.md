@@ -30,7 +30,7 @@ CleanFrame's photo and glass-dock home screen, ported from Samsung to LG, on top
   - left: **Inputs** (HDMI) and **Free memory** (closes everything running in the background and shows how much RAM you got back)
   - right: **All apps**, **Home settings** (this screen's own look options) and **TV settings** (LG's settings)
 - **Hold OK on any app** for a menu: Open · Move · Move to start · Remove from Home / Add to Home · Uninstall · Cancel.
-- **No LG Home at boot.** A splash with the same photo and clock covers the first minute of a cold start, then the dock appears. With Quick Start+, power on resumes straight into it.
+- **No LG Home at boot.** With Quick Start+, power on resumes straight into this screen. After a full restart the TV opens your last input (your set-top box, for example) instead of LG's Home, and this screen takes over once root has started, about a minute in.
 - **A faster TV:**
   - LG's log uploads and recommendation services are stopped.
   - LG no longer keeps apps preloaded in the background.
@@ -137,15 +137,9 @@ This backs up CleanYourTV's own page, puts CleanFrame in its place and reloads H
 <details open>
 <summary><b>7. Never see LG's Home at boot</b></summary>
 
-```powershell
-.\lgtv.ps1 splash
-```
-
-Then on the TV: **Settings → General → System → Additional Settings → Home Settings → Home Auto Launch: Off**.
+On the TV, find **Power On Screen** (on webOS 25 it's under Settings → General → System → Additional Settings) and set it to **Recent Input**. This is the `homeAutoLaunch` setting. With it, a full restart opens your last input (your set-top box, say) instead of LG's Home, and the new home takes over when root has started. Also keep **Quick Start+** on, so pressing the power button resumes in seconds and doesn't restart at all.
 
 </details>
-
-<img src="docs/images/boot-splash.jpg" alt="The boot splash: the same coastal photo and clock, shown during a cold boot instead of LG's Home" width="640">
 
 ---
 
@@ -182,21 +176,20 @@ LG TVs can't run Android apps (`.apk`), so apps like Brave, which only exist for
 | Preloading | Switches off LG's background preload of the browser, voice search and guide | On 1.2 GB of RAM, preloads push your own apps out of memory |
 | Memory | 384 MB zram (lz4), used before the flash swap | Idle pages are compressed in RAM instead of written to slow flash |
 | Storage | Weekly `fstrim` of the data partitions | LG never trims, so the flash slows down over time |
-| Boot | Splash app pinned as bootd's "last app" | A cold boot shows the splash instead of LG's Home |
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    A[Power on] --> B[webOS logo]
-    B --> C{Home Auto Launch off?}
-    C -- yes --> D[Splash app<br/>photo + clock]
-    C -- no --> E[LG Home]
+    A[Power on] --> B[LG logo]
+    B --> C{Power On Screen}
+    C -- Recent Input --> D[Last input<br/>e.g. set-top box]
+    C -- Home --> E[LG Home]
     D --> F[Homebrew Channel starts<br/>init.d boot hooks ~45-60 s]
     E --> F
     F --> G[CleanYourTV mounts CleanFrame<br/>over LG's Home, in RAM]
     G --> H[CleanFrame home]
-    F --> I[lgtv-tune: debloat, zram,<br/>preload, splash pin]
+    F --> I[lgtv-tune: debloat, zram,<br/>preload, self-repair]
     H -- Home key --> H
 ```
 
@@ -208,7 +201,7 @@ flowchart LR
 
 | To remove | Command |
 |---|---|
-| The boot splash | `.\lgtv.ps1 splash-off`, then turn Home Auto Launch back on |
+| Booting into the last input | Power On Screen → **Home** |
 | CleanFrame (back to CleanYourTV's page) | `.\lgtv.ps1 cleanframe-undo` |
 | LG's own Home | Open the CleanYourTV app → switch off "CleanYourTV as Home" |
 | All tweaks and scripts | `.\lgtv.ps1 remove`, then restart the TV |
@@ -220,14 +213,14 @@ flowchart LR
 
 - **Home key, leaving an app, leaving HDMI:** yes, always. LG's Home *is* this page now.
 - **Standby (Quick Start+ on):** the TV resumes where you left it, so you're back on this home screen within seconds.
-- **Full restart or power cut:** the webOS logo, then the splash (with Home Auto Launch off), then the dock appears once the Homebrew Channel has started, about a minute in. The LG logo itself can't be removed; it's drawn before anything rootable runs.
+- **Full restart or power cut:** the LG logo, then your last input (with Power On Screen set to Recent Input), then this screen about a minute in, once the Homebrew Channel has started. The LG logo itself can't be removed; it's drawn before anything rootable runs.
 
 </details>
 
 <details>
 <summary><b>Why does a cold boot take about a minute to show the dock?</b></summary>
 
-The Homebrew Channel, which runs all root scripts, is started by webOS about 45 seconds after power on, and the switch to the new Home needs root. The splash covers that time. Keep Quick Start+ on and you'll rarely see a cold boot at all.
+The Homebrew Channel, which runs all root scripts, is started by webOS about 45 seconds after power on, and the switch to the new Home needs root. On a test boot the new home was in front at 64 s. Something showing earlier isn't possible: LG's boot manager only opens LG's Home or a real input (HDMI, AV, antenna) at boot. It refuses apps, which was tested with a splash app. Keep Quick Start+ on and you'll rarely see a cold boot at all.
 
 </details>
 
@@ -241,11 +234,10 @@ On this firmware it only prints to a terminal. The scripts wrap it in `script -q
 ## Project layout
 
 ```
-lgtv.ps1                  PC control script (deploy, apply, cleanframe, splash, install-ipk, ...)
+lgtv.ps1                  PC control script (deploy, apply, cleanframe, install-ipk, ...)
 tv/                       everything that runs on the TV
   lgtv-tune.conf          settings for the tweaks
   tune.sh / undo.sh       apply / revert the tweaks
-  bootsplash.sh           cold boot -> splash -> CleanFrame
   cleanframe.sh           install CleanFrame as the Home page (with backup and self-repair)
   ipk.sh                  install / remove apps through LG's installer
   90-lgtv-tune            the boot hook
@@ -254,7 +246,7 @@ look/
   port_cleanframe.py      Samsung -> LG port of main.js
   cleanframe_features*.py Inputs, Free memory, Home/TV settings, hold-OK menu
   make_cleanframe_marks.py  white app symbols in CleanFrame's style
-  splash/  build_ipk.py   the boot splash app and the .ipk builder
+  build_ipk.py            builds a webOS .ipk from an app folder
   theme/ icons*/ ...      an alternative look for CleanYourTV's own launcher
 docs/images/              screenshots
 ```

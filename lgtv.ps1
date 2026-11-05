@@ -14,9 +14,6 @@
   .\lgtv.ps1 apps                   list the apps you can uninstall
   .\lgtv.ps1 cleanframe             copy look\cleanframe-lg to the TV and make CleanFrame the Home screen
   .\lgtv.ps1 cleanframe-undo        CleanYourTV's own home screen back
-  .\lgtv.ps1 splash                 build + install the boot splash, so a cold boot never shows LG's Home
-                                     (also switch off Home Auto Launch in the TV settings)
-  .\lgtv.ps1 splash-off             LG's own boot behaviour back
   .\lgtv.ps1 log | shell | reboot
 #>
 param(
@@ -79,17 +76,6 @@ switch ($Command) {
     Invoke-TV "sh $Remote/cleanframe.sh install"
   }
   'cleanframe-undo' { Invoke-TV "sh $Remote/cleanframe.sh undo" }
-  'splash' {
-    $ipk = "$Here\look\dist\com.lgtv.homesplash_1.0.0_all.ipk"
-    New-Item -ItemType Directory -Force "$Here\look\dist" | Out-Null
-    & python "$Here\look\build_ipk.py" "$Here\look\splash" $ipk
-    if ($LASTEXITCODE -ne 0) { throw 'building the splash package failed (is Python installed?)' }
-    Copy-ToTV @($ipk) '/tmp/lgtv-install.ipk'
-    Invoke-TV "sh $Remote/ipk.sh install /tmp/lgtv-install.ipk"
-    Invoke-TV "(sh $Remote/bootsplash.sh boot </dev/null >/dev/null 2>&1 &); sleep 3; sh $Remote/bootsplash.sh status"
-    Write-Host 'Now switch Home Auto Launch OFF on the TV: Settings > General > System > Additional Settings > Home Settings.'
-  }
-  'splash-off' { Invoke-TV "sh $Remote/bootsplash.sh off" }
   'shell'  { & ssh @SshOpts -t "root@$TV" }
   'reboot' { Invoke-TV 'reboot'; Write-Host 'Rebooting the TV.' }
   default  { Get-Help $MyInvocation.MyCommand.Path -Examples }
